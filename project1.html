@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inmate Behavior Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #output {
+            margin-top: 20px;
+        }
+
+        video {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Inmate Behavior Analysis</h1>
+
+    <button id="startButton">Start Speech Recognition</button>
+    <div id="output"></div>
+
+    <h2>Camera Feed</h2>
+    <video id="cameraFeed" autoplay playsinline></video>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const startButton = document.getElementById('startButton');
+            const outputDiv = document.getElementById('output');
+            const cameraFeed = document.getElementById('cameraFeed');
+
+            let recognition;
+
+            // Initialize Speech Recognition
+            if ('webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-IN'; // Change the language code as needed
+            } else {
+                outputDiv.innerHTML = 'Speech Recognition is not supported in your browser.';
+            }
+
+            // Handle speech recognition results
+            recognition.onresult = (event) => {
+                let result = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    result += event.results[i][0].transcript;
+                }
+                outputDiv.innerHTML = result;
+            };
+
+            // Handle errors in speech recognition
+            recognition.onerror = (event) => {
+                outputDiv.innerHTML = 'Speech Recognition Error: ' + event.error;
+            };
+
+            // Start Speech Recognition when the button is clicked
+            startButton.addEventListener('click', () => {
+                recognition.start();
+            });
+
+            // Access the camera and display the video feed
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    cameraFeed.srcObject = stream;
+                })
+                .catch((error) => {
+                    console.error('Error accessing camera:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+-- Create Database
+CREATE DATABASE IF NOT EXISTS PrisonerBehaviorAnalysis;
+
+-- Use the Database
+USE PrisonerBehaviorAnalysis;
+
+-- Create Table for Inmates
+CREATE TABLE IF NOT EXISTS Inmates (
+    inmate_id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    age INT,
+    gender VARCHAR(10),
+    prison_id INT,
+    entry_date DATE,
+    release_date DATE
+);
+
+-- Create Table for Speech Data
+CREATE TABLE IF NOT EXISTS SpeechData (
+    speech_id INT PRIMARY KEY,
+    inmate_id INT,
+    speech_text TEXT,
+    speech_date DATETIME,
+    FOREIGN KEY (inmate_id) REFERENCES Inmates(inmate_id)
+);
+
+-- Create Table for Behavior Analysis
+CREATE TABLE IF NOT EXISTS BehaviorAnalysis (
+    analysis_id INT PRIMARY KEY,
+    inmate_id INT,
+    analysis_text TEXT,
+    analysis_date DATETIME,
+    FOREIGN KEY (inmate_id) REFERENCES Inmates(inmate_id)
+);
+
+-- Create Table for Language Information
+CREATE TABLE IF NOT EXISTS LanguageInfo (
+    language_id INT PRIMARY KEY,
+    language_name VARCHAR(50)
+);
+
+-- Create Table for Speech-to-Text Conversion
+CREATE TABLE IF NOT EXISTS SpeechToTextConversion (
+    conversion_id INT PRIMARY KEY,
+    speech_id INT,
+    text_output TEXT,
+    conversion_date DATETIME,
+    language_id INT,
+    FOREIGN KEY (speech_id) REFERENCES SpeechData(speech_id),
+    FOREIGN KEY (language_id) REFERENCES LanguageInfo(language_id)
+);
